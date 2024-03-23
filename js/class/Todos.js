@@ -2,7 +2,7 @@ import { Task } from './Task.js';
 
 class Todos {
     #tasks = [];
-    #backend_url = ''
+    #backend_url = '';
 
     constructor(url) {
         this.#backend_url = url;
@@ -22,24 +22,6 @@ class Todos {
 
     }
 
-    addTask = (text) => {
-        return new Promise(async (resolve, reject) => {
-            const json = JSON.stringify({description: text})
-            fetch(this.#backend_url + "/new", {
-                method: 'post',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: json
-            }).then(response => response.json())
-            .then(json => {
-                resolve(this.#addToArray(json.id, text));
-            }, (error) => {
-                reject(error);
-            })
-        })
-    }
-
     #readJSON = (taskAsJson) => {
         taskAsJson.forEach(node => {
             const task = new Task(node.id, node.description);
@@ -51,6 +33,27 @@ class Todos {
         const task = new Task(id, text);
         this.#tasks.push(task);
         return task;
+    }
+
+    addTask = (text) => {
+        return new Promise(async (resolve, reject) => {
+            const json = JSON.stringify({description: text});
+            fetch(this.#backend_url + "/new", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: json
+            })
+            .then(response => response.json())
+            .then(json => {
+                resolve(this.#addToArray(json.id, text));
+                console.log(error)
+            }, (error) => {
+                reject(error);
+                console.log(error)
+            })
+        })
     }
 
     removeTask = (id) => {
